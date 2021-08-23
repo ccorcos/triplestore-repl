@@ -2,7 +2,7 @@
 
 [Live App](https://ccorcos.github.io/game-counter)
 
-A simple application for keeping score in board games.
+A simple application for keeping score in games. For example, golf or Settlers of Catan.
 
 ## Architecture
 
