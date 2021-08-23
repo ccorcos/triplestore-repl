@@ -1,4 +1,4 @@
-# TypeScript Boilerplate
+# Game Counter
 
 **Features**
 - React
@@ -7,12 +7,11 @@
 - Deploy to Github Pages
 - Environment and StateMachine architecture
 
-## Getting Started
+## Development
 
 ```sh
-git clone git@github.com:ccorcos/typescript-boilerplate.git project
-cd project
-git remote remove origin
+git clone git@github.com:ccorcos/game-counter.git
+cd game-counter
 npm install
 npm start
 ```
