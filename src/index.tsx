@@ -8,7 +8,10 @@ import "./index.css"
 // Build the environment.
 let initialGame = newGame()
 try {
-	initialGame = JSON.parse(localStorage.getItem("state")!)
+	const oldGame = JSON.parse(localStorage.getItem("state")!)
+	if (oldGame) {
+		initialGame = oldGame
+	}
 } catch (error) {}
 
 const app = new AppState(initialGame)
