@@ -5,10 +5,11 @@ import { App } from "./components/App"
 import { Environment, EnvironmentProvider } from "./Environment"
 import "./index.css"
 
+const localStorageKey = "__GameScore__"
 // Build the environment.
 let initialGame = newGame()
 try {
-	const item = localStorage.getItem("__GameScore__")
+	const item = localStorage.getItem(localStorageKey)
 	if (item) {
 		const oldGame = JSON.parse(item)
 		if (oldGame) {
@@ -19,7 +20,7 @@ try {
 
 const app = new AppState(initialGame)
 app.addListener(() => {
-	localStorage.setItem("state3", JSON.stringify(app.state))
+	localStorage.setItem(localStorageKey, JSON.stringify(app.state))
 })
 
 const environment: Environment = { app }
