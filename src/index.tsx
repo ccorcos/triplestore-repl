@@ -8,15 +8,18 @@ import "./index.css"
 // Build the environment.
 let initialGame = newGame()
 try {
-	const oldGame = JSON.parse(localStorage.getItem("state")!)
-	if (oldGame) {
-		initialGame = oldGame
+	const item = localStorage.getItem("__GameScore__")
+	if (item) {
+		const oldGame = JSON.parse(item)
+		if (oldGame) {
+			initialGame = oldGame
+		}
 	}
 } catch (error) {}
 
 const app = new AppState(initialGame)
 app.addListener(() => {
-	localStorage.setItem("state", JSON.stringify(app.state))
+	localStorage.setItem("state3", JSON.stringify(app.state))
 })
 
 const environment: Environment = { app }
