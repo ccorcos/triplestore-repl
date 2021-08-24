@@ -1,29 +1,23 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import { AppState, newGame } from "./AppState"
+import { AppState } from "./AppState"
+import { AppStorage } from "./AppStorage"
 import { App } from "./components/App"
 import { Environment, EnvironmentProvider } from "./Environment"
 import "./index.css"
 
-const localStorageKey = "__GameScore__"
 // Build the environment.
-let initialGame = newGame()
-try {
-	const item = localStorage.getItem(localStorageKey)
-	if (item) {
-		const oldGame = JSON.parse(item)
-		if (oldGame) {
-			initialGame = oldGame
-		}
-	}
-} catch (error) {}
+const storage = new AppStorage()
+const initialState = storage.get()
 
-const app = new AppState(initialGame)
-app.addListener(() => {
-	localStorage.setItem(localStorageKey, JSON.stringify(app.state))
-})
+const app = new AppState(initialState)
+app.addListener(() => storage.set(app.state))
 
 const environment: Environment = { app }
+
+// For debugging from the Console.
+;(window as any)["environment"] = environment
+Object.assign(window as any, environment)
 
 // Render the app.
 const root = document.createElement("div")
@@ -35,7 +29,3 @@ ReactDOM.render(
 	</EnvironmentProvider>,
 	root
 )
-
-// For debugging from the Console.
-;(window as any)["environment"] = environment
-Object.assign(window as any, environment)
