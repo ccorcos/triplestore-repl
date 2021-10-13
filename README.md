@@ -1,21 +1,5 @@
-# Game Score Counter
+# Triplestore REPL
 
-[Live App](https://ccorcos.github.io/game-counter)
+[Live App](https://ccorcos.github.io/triplestore-repl)
 
-A simple application for keeping score in games. For example, golf or Settlers of Catan.
-
-## Architecture
-
-- No side-effects at the top level except for index.tsx.
-- External effects interface through services defined on the Environment.
-- The Environment is plumbed around everywhere.
-- StateMachine is a Redux-style state management abstraction with less boilerplate.
-
-## Development
-
-```sh
-git clone git@github.com:ccorcos/game-counter.git
-cd game-counter
-npm install
-npm start
-```
+This is a simple application with a DSL for playing with the [`triple-database`](https://github.com/ccorcos/triple-database/)
