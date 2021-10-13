@@ -1,9 +1,4 @@
-//
-// ./node_modules/.bin/ts-node src/test/repl.ts
-//
-
 import * as p from "parsimmon"
-import * as readline from "readline"
 import { Triplestore } from "triple-database"
 import { Expression, OrExpression, Sort } from "triple-database/database/query"
 import { ScanIndexArgs } from "triple-database/database/scanIndex"
@@ -179,95 +174,72 @@ export const pScan = p
 			)
 	})
 
-const db = new Triplestore()
+export function evaluate(db: Triplestore, input: string) {
+	const program = p.alt(
+		pAdd.map((triples) => {
+			const tx = db.transact()
+			triples.forEach((triple) => tx.set(triple))
+			tx.commit()
+			return `added ${triples.length} facts`
+		}),
+		pRemove.map((triples) => {
+			const tx = db.transact()
+			triples.forEach((triple) => tx.remove(triple))
+			tx.commit()
+			return `removed ${triples.length} facts`
+		}),
+		pQuery.map((args) => {
+			const { name, sort, filter } = args
+			if (name && sort) {
+				db.ensureIndex({ name, sort, filter })
+				return `created index ${name}`
+			} else if (sort) {
+				return db.querySort({ filter, sort })
+			} else {
+				return db.query({ filter })
+			}
+		}),
+		pScan.map((args) => {
+			console.log(args)
+			return db.scanIndex(args)
+		})
+	)
 
-const program = p.alt(
-	pAdd.map((triples) => {
-		const tx = db.transact()
-		triples.forEach((triple) => tx.set(triple))
-		tx.commit()
-		return `added ${triples.length} facts`
-	}),
-	pRemove.map((triples) => {
-		const tx = db.transact()
-		triples.forEach((triple) => tx.remove(triple))
-		tx.commit()
-		return `removed ${triples.length} facts`
-	}),
-	pQuery.map((args) => {
-		const { name, sort, filter } = args
-		if (name && sort) {
-			db.ensureIndex({ name, sort, filter })
-			return `created index ${name}`
-		} else if (sort) {
-			return db.querySort({ filter, sort })
-		} else {
-			return db.query({ filter })
-		}
-	}),
-	pScan.map((args) => {
-		console.log(args)
-		return db.scanIndex(args)
-	})
-)
-
-async function main() {
-	const rl = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-	})
-
-	async function read() {
-		return new Promise<string>((resolve) => rl.question("> ", resolve))
+	const str = input.trim()
+	if (str === "" || str.startsWith("#")) {
+		// Allow empty lines and comments.
+		return undefined
 	}
-
-	while (true) {
-		const input = await read()
-		const str = input.trim()
-		if (str === "" || str.startsWith("#")) {
-			// Allow empty lines and comments.
-			continue
-		}
-		if (str === "help") {
-			console.log(
-				`
+	if (str === "help") {
+		return `
 Add facts with the 'add' command:
-  add chet age 30
+	add chet age 30
 Add multiple facts using a comma:
-  add chet color blue, chet wife meghan, meghan color red
+	add chet color blue, chet wife meghan, meghan color red
 
 Remove facts with 'remove' command:
-  remove chet age 30
+	remove chet age 30
 
 Query facts with 'query' command:
-  filter ?e ?a ?v
-  filter ?person color blue
+	filter ?e ?a ?v
+	filter ?person color blue
 	filter ?person color ?color
 
 Sort the output a query by piping to 'sort':
-  filter ?person color ?color | sort ?color ?person
+	filter ?person color ?color | sort ?color ?person
 
 Or create an index for performant reads:
-  filter ?person color ?color | index personByColor ?color ?person
+	filter ?person color ?color | index personByColor ?color ?person
 
 Then you can scan the index:
-  scan personByColor =blue
+	scan personByColor =blue
 	scan personByColor >blue chet
-			`.trim()
-			)
-		}
-		const result = program.parse(str)
-		if (!result.status) {
-			console.log("Failed to parse.")
-			continue
-		} else {
-			console.log(result.value)
-		}
+		`.trim()
 	}
-}
-
-if (require.main === module) {
-	console.log("Starting Triplestore REPL...")
-	console.log("Type 'help' for commands.")
-	main()
+	const result = program.parse(str)
+	if (!result.status) {
+		return "Failed to parse."
+	} else {
+		return result.value
+	}
 }
