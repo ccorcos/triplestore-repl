@@ -18,7 +18,8 @@
 		"lodash": "^4.17.20",
 		"mini-css-extract-plugin": "^2.2.0",
 		"react": "^17.0.1",
-		"react-dom": "^17.0.1"
+		"react-dom": "^17.0.1",
+		"triple-database": "^0.1.0"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.168",
