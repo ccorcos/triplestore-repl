@@ -25,6 +25,7 @@ export function REPL(props: { db: Triplestore }) {
 		(event: React.KeyboardEvent<HTMLInputElement>) => {
 			if (event.key === "Enter") {
 				const input = inputRef.current
+				if (input.trim() === "") return
 				setValue("")
 				const result = evaluate(db, input)
 				setCommands((list) => [...list, [input, result]])
@@ -118,7 +119,7 @@ function pretty(
 	// depth = 0
 ) {
 	// if (arg === undefined) return "undefined"
-	// if (typeof arg === "string") return arg
+	if (typeof arg === "string") return arg
 	// if (typeof arg === "number") return arg
 	// if (typeof arg === "boolean") return arg.toString()
 	// if (Array.isArray(arg)) {
@@ -129,7 +130,7 @@ function pretty(
 	// 	)
 	// }
 
-	return inspect(arg)
+	return inspect(arg, { depth: 100 })
 }
 
 /*
