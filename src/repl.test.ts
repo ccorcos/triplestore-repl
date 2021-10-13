@@ -2,12 +2,12 @@ import { strict as assert } from "assert"
 import { describe, it } from "mocha"
 import * as p from "parsimmon"
 import {
-	pAdd,
 	pIndex,
 	pNumber,
 	pQuery,
 	pRemove,
 	pScan,
+	pSet,
 	pString,
 	pValue,
 	pVar,
@@ -86,14 +86,14 @@ describe("pVar", () => {
 	})
 })
 
-describe("pAdd", () => {
+describe("pSet", () => {
 	it("works", () => {
-		const parsed = pAdd.parse("add 1 2 3")
+		const parsed = pSet.parse("set 1 2 3")
 		assert.ok(parsed.status)
 		assert.deepEqual(parsed.value, [[1, 2, 3]])
 	})
 	it("can do multiple facts", () => {
-		const parsed = pAdd.parse("add 1 2 3, a b c")
+		const parsed = pSet.parse("set 1 2 3, a b c")
 		assert.ok(parsed.status)
 		assert.deepEqual(parsed.value, [
 			[1, 2, 3],

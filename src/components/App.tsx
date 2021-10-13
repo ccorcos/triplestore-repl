@@ -1,3 +1,4 @@
+import inspect from "browser-util-inspect"
 import React, { useCallback, useEffect, useState } from "react"
 import { Triplestore, Tuple } from "triple-database"
 import { Binding } from "triple-database/database/query"
@@ -22,11 +23,12 @@ export function REPL(props: { db: Triplestore }) {
 	const inputRef = useRefCurrent(value)
 	const handleKeyDown = useCallback(
 		(event: React.KeyboardEvent<HTMLInputElement>) => {
-			if (event.key !== "Enter") return
-			const input = inputRef.current
-			setValue("")
-			const result = evaluate(db, input)
-			setCommands((list) => [...list, [input, result]])
+			if (event.key === "Enter") {
+				const input = inputRef.current
+				setValue("")
+				const result = evaluate(db, input)
+				setCommands((list) => [...list, [input, result]])
+			}
 		},
 		[]
 	)
@@ -86,9 +88,9 @@ function Data(props: { db: Triplestore }) {
 	return (
 		<div style={{ maxWidth: "100%", width: "45em" }}>
 			<h2>Ordered Key-Value Storage</h2>
-			{data.map((tuple, i) => {
-				return <div key={i}>{pretty(tuple)}</div>
-			})}
+			<div style={{ whiteSpace: "pre" }}>
+				{pretty(data.map(([tuple]) => tuple))}
+			</div>
 		</div>
 	)
 }
@@ -111,8 +113,30 @@ export function App(props: { db: Triplestore }) {
 	)
 }
 
-function pretty(arg: string | Tuple[] | Binding[] | undefined) {
-	if (typeof arg === "string") return arg
-	if (arg === undefined) return "undefined"
-	return JSON.stringify(arg, null, 2)
+function pretty(
+	arg: string | number | boolean | any[] | object | undefined
+	// depth = 0
+) {
+	// if (arg === undefined) return "undefined"
+	// if (typeof arg === "string") return arg
+	// if (typeof arg === "number") return arg
+	// if (typeof arg === "boolean") return arg.toString()
+	// if (Array.isArray(arg)) {
+	// 	return (
+	// 		"[ " +
+	// 		arg.map((arg) => pretty(arg, depth + 1)).join(depth < 1 ? "\n" : ", ") +
+	// 		" ]"
+	// 	)
+	// }
+
+	return inspect(arg)
 }
+
+/*
+
+Demo:
+
+set chet color blue, meghan color red, sean color green, andrew color blue
+filter ?person color ?color
+
+*/

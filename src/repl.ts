@@ -55,8 +55,8 @@ const pTriple = <T>(parser: p.Parser<T>): p.Parser<[T, T, T]> => {
 
 const pFact = pTriple(pValue)
 
-export const pAdd = p
-	.string("add")
+export const pSet = p
+	.string("set")
 	.then(p.whitespace)
 	.then(p.sepBy1(pFact, p.string(",").then(p.whitespace)))
 
@@ -176,7 +176,7 @@ export const pScan = p
 
 export function evaluate(db: Triplestore, input: string) {
 	const program = p.alt(
-		pAdd.map((triples) => {
+		pSet.map((triples) => {
 			const tx = db.transact()
 			triples.forEach((triple) => tx.set(triple))
 			tx.commit()
@@ -212,10 +212,10 @@ export function evaluate(db: Triplestore, input: string) {
 	}
 	if (str === "help") {
 		return `
-Add facts with the 'add' command:
-	add chet age 30
+Add facts with the 'set' command:
+	set chet age 30
 Add multiple facts using a comma:
-	add chet color blue, chet wife meghan, meghan color red
+	set chet color blue, chet wife meghan, meghan color red
 
 Remove facts with 'remove' command:
 	remove chet age 30
