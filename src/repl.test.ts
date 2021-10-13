@@ -44,6 +44,10 @@ describe("pNumber", () => {
 		assert.ok(parsed.status)
 		assert.equal(parsed.value, 12)
 	})
+	it("fails", () => {
+		const parsed = pNumber.parse("12-12")
+		assert.ok(!parsed.status)
+	})
 	it("negative", () => {
 		const parsed = pNumber.parse("-12")
 		assert.ok(parsed.status)

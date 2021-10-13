@@ -24,11 +24,11 @@ function between(left: string, right: string) {
 }
 
 export const pString = p.alt(
-	p.regex(/[a-zA-Z][a-zA-Z0-9_-]*/),
+	p.regex(/[a-zA-Z][a-zA-Z0-9_\-]*/),
 	between('"', '"')
 )
 
-export const pNumber = p.regex(/[0-9\.\-e]+/).chain((str) => {
+export const pNumber = p.regex(/\-?[0-9\.e]+/).chain((str) => {
 	const n = parseFloat(str)
 	if (isNaN(n)) return p.fail("Not a number")
 	else return p.succeed(n)
@@ -200,7 +200,6 @@ export function evaluate(db: Triplestore, input: string) {
 			}
 		}),
 		pScan.map((args) => {
-			console.log(args)
 			return db.scanIndex(args)
 		})
 	)
@@ -214,26 +213,48 @@ export function evaluate(db: Triplestore, input: string) {
 		return `
 Add facts with the 'set' command:
 	set chet age 30
+
 Add multiple facts using a comma:
 	set chet color blue, chet wife meghan, meghan color red
 
-Remove facts with 'remove' command:
+Remove facts with 'remove' command (and multiple with a comma):
 	remove chet age 30
 
-Query facts with 'query' command:
+Filter facts with the 'filter' command:
+	(get all facts)
 	filter ?e ?a ?v
+
+	(get all people who's color is blue)
 	filter ?person color blue
+
+	(get all people and their colors)
 	filter ?person color ?color
 
+Filters can have compound AND clauses using a comma:
+  (friends who's color is blue)
+  filter ?person friend ?friend, ?friend color blue
+
+Filters can have compound OR clauses using a semi-colon.
+  (friends whos color is blue or red)
+  filter ?person friend ?friend, ?friend color blue; ?person friend ?friend, ?friend color red
+
 Sort the output a query by piping to 'sort':
+  (all people and their colors ordered by color first)
 	filter ?person color ?color | sort ?color ?person
 
 Or create an index for performant reads:
+  (this index will be updated when new facts are added)
 	filter ?person color ?color | index personByColor ?color ?person
 
 Then you can scan the index:
+  (=tuple filters for a prefix)
 	scan personByColor =blue
+
+	(>tuple will filter for greater than, >=, <, <= also available)
 	scan personByColor >blue chet
+
+	(- means reverse order, !n means limit n)
+	scan personByColor - !2
 		`.trim()
 	}
 	const result = program.parse(str)

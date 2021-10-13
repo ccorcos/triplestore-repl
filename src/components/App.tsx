@@ -89,7 +89,7 @@ function Data(props: { db: Triplestore }) {
 	return (
 		<div style={{ maxWidth: "100%", width: "45em" }}>
 			<h2>Ordered Key-Value Storage</h2>
-			<div style={{ whiteSpace: "pre" }}>
+			<div style={{ whiteSpace: "pre", color: "gray" }}>
 				{pretty(data.map(([tuple]) => tuple))}
 			</div>
 		</div>
@@ -109,6 +109,11 @@ export function App(props: { db: Triplestore }) {
 			</div>
 			<div style={{ overflow: "auto" }}>
 				<Data db={props.db} />
+			</div>
+			<div style={{ position: "absolute", top: 8, right: 8 }}>
+				<a href="https://github.com/ccorcos/triplestore-repl/">
+					source code + examples
+				</a>
 			</div>
 		</div>
 	)
@@ -138,6 +143,7 @@ function pretty(
 Demo:
 
 set chet color blue, meghan color red, sean color green, andrew color blue
-filter ?person color ?color
+filter ?person color ?color | index personByColor ?color ?person
+
 
 */
