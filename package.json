@@ -7,7 +7,8 @@
 		"start": "webpack serve",
 		"build": "rm -rf dist && NODE_ENV='production' webpack",
 		"deploy": "git add -f dist && git commit -m 'deploy' && git push origin `git subtree split --prefix dist master`:gh-pages --force && git rm -r dist && git commit -m 'cleanup deploy'",
-		"release": "npm run build && npm run deploy"
+		"release": "npm run build && npm run deploy",
+		"test": "mocha -r ts-node/register './src/**/*.test.ts' --verbose"
 	},
 	"keywords": [],
 	"author": "",
@@ -17,17 +18,22 @@
 		"glamor": "^2.20.40",
 		"lodash": "^4.17.20",
 		"mini-css-extract-plugin": "^2.2.0",
+		"parsimmon": "^1.18.0",
 		"react": "^17.0.1",
 		"react-dom": "^17.0.1",
-		"triple-database": "^0.1.0"
+		"triple-database": "^0.1.0",
+		"tuple-database": "^1.2.4"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.168",
+		"@types/mocha": "whitecolor/mocha-types",
+		"@types/parsimmon": "^1.10.6",
 		"@types/react": "^17.0.0",
 		"@types/react-dom": "^17.0.0",
 		"@types/webpack": "^5.28.0",
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.3.2",
+		"mocha": "^8.3.0",
 		"ts-loader": "^9.2.5",
 		"ts-node": "^10.2.1",
 		"typescript": "^4.1.3",
